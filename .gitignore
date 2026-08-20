@@ -1,8 +1,9 @@
 .env
 .env.*
 *.token
-data/**/*.jsonl
-!data/snapshots/*.jsonl.gz
+# A recolha é escrita aqui durante o job e publicada em adlib-data (privado).
+# Nada de dados entra neste repositório: o código é público, a série não.
+data/
 __pycache__/
 *.pyc
 .DS_Store

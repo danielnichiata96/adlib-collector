@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
-      contents: write
+      contents: read          # já não escreve aqui: a série vai para adlib-data
 
     steps:
       - uses: actions/checkout@v4
@@ -41,17 +41,44 @@ jobs:
           fi
           python3 -u scripts/collect_daily.py
 
-      - name: Commitar
+      # A série longitudinal não vive neste repositório. Este é público — tem de
+      # ser, porque a quota gratuita de Actions em repositório privado está
+      # esgotada — e o código pode ser público sem custo. A série não pode: a
+      # janela do arquivo da Meta é móvel de 12 meses e o dia não capturado
+      # deixa de existir. Vai por chave de implantação para adlib-data, privado.
+      # A chave é de escrita e só abre aquele repositório.
+      - name: Publicar a série no repositório privado
+        env:
+          DEPLOY_KEY: ${{ secrets.DATA_DEPLOY_KEY }}
         run: |
-          rm -f niches.json
+          if [ -z "$DEPLOY_KEY" ]; then
+            echo "::error::Secret DATA_DEPLOY_KEY em falta — a recolha de hoje perder-se-ia"
+            exit 1
+          fi
+          shopt -s nullglob
+          novos=(data/snapshots/*.jsonl.gz)
+          if [ ${#novos[@]} -eq 0 ]; then
+            echo "::error::nenhum ficheiro recolhido"; exit 1
+          fi
+
+          mkdir -p ~/.ssh
+          printf '%s\n' "$DEPLOY_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -t ed25519 github.com >> ~/.ssh/known_hosts 2>/dev/null
+
+          git clone --quiet git@github.com:danielnichiata96/adlib-data.git ../dados
+          mkdir -p ../dados/data/snapshots
+          cp "${novos[@]}" ../dados/data/snapshots/
+          cd ../dados
           git config user.name  "coletor"
           git config user.email "coletor@users.noreply.github.com"
-          git add -f data/snapshots/*.jsonl.gz 2>/dev/null || true
+          git add data/snapshots
           if git diff --staged --quiet; then
             echo "::warning::nada de novo"
           else
-            git commit -m "Snapshot de $(date -u +%Y-%m-%d)"
-            git push
+            git commit -q -m "Snapshot de $(date -u +%Y-%m-%d)"
+            git push --quiet
+            echo "${#novos[@]} ficheiros gravados em adlib-data"
           fi
 
       - name: Validade do token
