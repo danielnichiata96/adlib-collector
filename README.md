@@ -10,11 +10,26 @@ Corre em GitHub Actions porque um portátil não é infraestrutura.
 
 ## O que faz
 
-Todos os dias pede os anúncios que começaram há mais de 180 dias e continuam
-ativos, para um conjunto de consultas. Medir a mesma população todos os dias é o
-que torna o **delta de alcance** entre snapshots interpretável — alcance
-acumulado dividido por idade não distingue quem entrega hoje de quem concentrou
-tudo há meses.
+Todos os dias, duas populações por consulta:
+
+**Veteranos** — começaram há mais de 180 dias e continuam ativos. Registo
+completo. É o conjunto de referência: o que sobreviveu.
+
+**Risers** — entre 7 e 30 dias. Registo compacto: id, pagador, início, alcance e
+destino, sem criativo nem segmentação. É o conjunto de descoberta. Com meia-vida
+de oferta de 3 a 9 meses, esperar 180 dias para ver uma oferta é encontrá-la
+quando a janela já passou. O compacto custa 62 MB/ano em vez de 724, e não perde
+nada de definitivo: o que sobreviver entra nos veteranos com registo completo, e
+o que ainda estiver a correr responde à API por id.
+
+Medir as mesmas populações todos os dias é o que torna o **delta de alcance**
+entre snapshots interpretável — alcance acumulado dividido por idade não
+distingue quem entrega hoje de quem concentrou tudo há meses.
+
+O corte inferior dos risers é feito pela API (`ad_delivery_date_max = hoje − 7`),
+não localmente. Como a API devolve por recência, isso põe a janela pedida nas
+primeiras páginas; sem esse truque seriam 40 páginas por nicho para lá chegar, e
+o limite é de ~200 chamadas por hora.
 
 Grava JSONL comprimido e publica em
 [`adlib-data`](https://github.com/danielnichiata96/adlib-data) — repositório
