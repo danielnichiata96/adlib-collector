@@ -24,8 +24,9 @@ exatamente a janela pedida — sem isto seriam precisas 40 páginas por nicho pa
 lá chegar, e o limite é de ~200 chamadas por hora.
 
 Riser guarda **registo compacto**: id, pagador, início, alcance e destino. Sem
-criativo, sem segmentação. São 62 MB/ano em vez de 724, e não se perde nada que
-não se possa ir buscar depois — o que sobreviver entra no conjunto de veteranos,
+criativo, sem segmentação. Medido na primeira recolha real: 16.351 risers em
+460 KB, contra ~5,4 MB no registo completo — 165 MB/ano em vez de ~1,9 GB. E não
+se perde nada de definitivo: o que sobreviver entra no conjunto de veteranos,
 onde o registo é completo, e o que ainda estiver a correr responde à API por id.
 """
 

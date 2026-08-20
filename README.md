@@ -18,9 +18,10 @@ completo. É o conjunto de referência: o que sobreviveu.
 **Risers** — entre 7 e 30 dias. Registo compacto: id, pagador, início, alcance e
 destino, sem criativo nem segmentação. É o conjunto de descoberta. Com meia-vida
 de oferta de 3 a 9 meses, esperar 180 dias para ver uma oferta é encontrá-la
-quando a janela já passou. O compacto custa 62 MB/ano em vez de 724, e não perde
-nada de definitivo: o que sobreviver entra nos veteranos com registo completo, e
-o que ainda estiver a correr responde à API por id.
+quando a janela já passou. Medido: 16.351 risers em 460 KB, contra ~5,4 MB se
+fosse registo completo — 165 MB/ano em vez de ~1,9 GB. E não perde nada de
+definitivo: o que sobreviver entra nos veteranos com registo completo, e o que
+ainda estiver a correr responde à API por id.
 
 Medir as mesmas populações todos os dias é o que torna o **delta de alcance**
 entre snapshots interpretável — alcance acumulado dividido por idade não
