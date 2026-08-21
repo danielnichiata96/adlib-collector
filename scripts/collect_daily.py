@@ -37,7 +37,7 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from probe import FIELDS, load_env, resolve_token, sanitize  # noqa: E402
@@ -135,12 +135,16 @@ def fetch_risers(token, countries, terms, min_days, max_days, hoje):
 
 
 def write(path, ads, stamp, countries, terms, window, compact=False):
+    # A hora importa: o delta de alcance divide-se pelo tempo real entre
+    # capturas. Sem ela, duas recolhas separadas por nove horas mas em dias
+    # diferentes dão uma velocidade 2,6× menor que a real.
+    agora = datetime.now(timezone.utc).isoformat(timespec="seconds")
     with gzip.open(path, "wt", encoding="utf-8") as fh:
         for ad in ads:
             rec = {k: ad[k] for k in RISER_FIELDS if k in ad} if compact else sanitize(ad)
-            fh.write(json.dumps({**rec, "_captured": stamp, "_countries": countries,
-                                 "_terms": terms, "_window": window},
-                                ensure_ascii=False) + "\n")
+            fh.write(json.dumps({**rec, "_captured": stamp, "_captured_at": agora,
+                                 "_countries": countries, "_terms": terms,
+                                 "_window": window}, ensure_ascii=False) + "\n")
     return os.path.getsize(path) // 1024
 
 
