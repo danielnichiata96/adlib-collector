@@ -36,6 +36,11 @@ FIELDS = [
     # empresa separam-se, e vendedores distintos hospedados na mesma
     # plataforma colapsam. page_id e beneficiary_payers corrigem os dois erros.
     "page_id", "beneficiary_payers", "publisher_platforms",
+    # quem o algoritmo escolheu, que não é quem o anunciante pediu: 71% dos
+    # veteranos pedem 18-65, ou seja não segmentam. O alcance real por faixa
+    # etária e género é publicado por obrigação da DSA e é o único sinal de
+    # avatar que existe sem comprar mídia.
+    "age_country_gender_reach_breakdown",
 ]
 
 # (rótulo, países, termo de busca no idioma local)
